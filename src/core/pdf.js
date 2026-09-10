@@ -112,38 +112,12 @@ export async function buildDocument(project, options = {}) {
   }
   async function embed(photo) {
     if (!imageCache.has(photo.data)) {
-      let data = photo.data
-      let compactBytes
-      if (options.quality === 'compact' && typeof createImageBitmap !== 'undefined') {
-        const bitmap = await createImageBitmap(new Blob([dataBytes(data)]))
-        try {
-          const ratio = Math.min(1, 1400 / Math.max(bitmap.width, bitmap.height))
-          const canvas =
-            typeof OffscreenCanvas !== 'undefined'
-              ? new OffscreenCanvas(1, 1)
-              : document.createElement('canvas')
-          canvas.width = Math.round(bitmap.width * ratio)
-          canvas.height = Math.round(bitmap.height * ratio)
-          const ctx = canvas.getContext('2d')
-          ctx.fillStyle = '#fff'
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-          if (canvas.convertToBlob)
-            compactBytes = await (
-              await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.75 })
-            ).arrayBuffer()
-          else data = canvas.toDataURL('image/jpeg', 0.75)
-        } finally {
-          bitmap.close()
-        }
-      }
+      const data = options.compactImages?.get(photo.data) || photo.data
       imageCache.set(
         photo.data,
-        compactBytes
-          ? await doc.embedJpg(compactBytes)
-          : data.startsWith('data:image/png')
-            ? await doc.embedPng(dataBytes(data))
-            : await doc.embedJpg(dataBytes(data)),
+        data.startsWith('data:image/png')
+          ? await doc.embedPng(dataBytes(data))
+          : await doc.embedJpg(dataBytes(data)),
       )
     }
     return imageCache.get(photo.data)

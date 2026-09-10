@@ -84,6 +84,29 @@ export async function transformPhoto(photo, rotation = 0, crop = null) {
     img.close()
   }
 }
+export async function compactPhoto(data) {
+  const img = await bitmap(data)
+  try {
+    const scale = Math.min(1, 1400 / Math.max(img.width, img.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.max(1, Math.round(img.width * scale))
+    canvas.height = Math.max(1, Math.round(img.height * scale))
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise((resolve, reject) =>
+      canvas.toBlob(
+        (value) => (value ? resolve(value) : reject(new Error('图片压缩失败，请重试。'))),
+        'image/jpeg',
+        0.75,
+      ),
+    )
+    return await readDataUrl(blob)
+  } finally {
+    img.close()
+  }
+}
 export function formatBytes(bytes = 0) {
   return bytes >= 1048576
     ? `${(bytes / 1048576).toFixed(1)} MB`
