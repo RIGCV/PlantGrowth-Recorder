@@ -1,0 +1,31 @@
+{
+  "name": "plantgrowth-recorder",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/model.test.js tests/pdf.test.js",
+    "test:e2e": "playwright test",
+    "format": "prettier --write src tests *.js *.json index.html docs README.md",
+    "format:check": "prettier --check src tests *.js *.json index.html docs README.md"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "element-plus": "^2.14.5",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
+    "vue": "^3.5.41"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "prettier": "^3.9.6",
+    "vite": "^8.2.2"
+  }
+}
