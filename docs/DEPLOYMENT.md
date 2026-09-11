@@ -1,5 +1,32 @@
 # 部署、更新与回滚
 
+## GitHub Pages
+
+项目已包含 `.github/workflows/pages.yml`。它会在 `main` 推送后执行检查、测试、构建并发布，也可从 Actions 手动运行。构建从 Pages 设置读取实际路径，普通项目仓库、用户主页仓库和自定义域名无需分别修改源码。
+
+1. 在 GitHub 创建空仓库，例如 `PlantGrowth-Recorder`，不要初始化 README、许可证或 `.gitignore`。GitHub Free 使用公开仓库；公开仓库会公开源代码。
+2. 在本机项目目录执行以下命令，将 `YOUR_NAME` 替换为 GitHub 用户名。当前目录已经初始化 Git，无需重新初始化。
+
+   ```powershell
+   cd F:\Desktop\PlantGrowth-Recorder
+   git add vite.config.js .github/workflows/pages.yml docs/DEPLOYMENT.md
+   git commit -m "Add GitHub Pages deployment"
+   git remote add origin https://github.com/YOUR_NAME/PlantGrowth-Recorder.git
+   git push -u origin main
+   ```
+
+3. 在仓库的 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。
+4. 如果第一次推送发生在启用 Pages 之前，进入 **Actions → Deploy to GitHub Pages → Run workflow**，选择 `main` 并运行。
+5. 成功后从部署结果或 Settings → Pages 打开实际网址，通常为 `https://YOUR_NAME.github.io/PlantGrowth-Recorder/`。
+
+自动部署只上传 `dist`。不需要手动上传 `node_modules`、`dist` 或配置 GitHub Token。`origin` 已存在时先用 `git remote -v` 检查，确认目标后再调整；不要强制推送覆盖已有仓库。推送时按照 Git 的登录提示完成 GitHub 身份验证。
+
+此 Pages 工作流会对外发布网站，不继承原 Sites 的仅所有者访问限制。用户数据仍仅保存在各自浏览器。切换域名前，在旧站点导出项目备份，再到新站点导入。
+
+本地验证项目子路径：在 PowerShell 中设置 `$env:DEPLOY_BASE='/PlantGrowth-Recorder/'` 后构建和启动预览；检查完成后执行 `Remove-Item Env:DEPLOY_BASE`。常规开发和原 Sites 构建默认仍使用 `/`。
+
+参考：[Vite 部署指南](https://vite.dev/guide/static-deploy#github-pages)、[GitHub Pages 工作流](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)。
+
 ## 静态部署
 
 1. 使用锁文件执行 `npm ci`。
